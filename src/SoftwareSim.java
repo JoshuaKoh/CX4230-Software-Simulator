@@ -1,20 +1,44 @@
-public class SoftwareSim extends Engine {
-    boolean isDebug = false;
+import java.util.ArrayList;
 
+public class SoftwareSim extends Engine {
     // CONSTANTS
-    // TODO
+    final int OUTAGE_CHECK = 96;
 
     // PARAMETERS
-    // TODO
+    boolean doDebug;
+    int limitInput;
+    int testChance;
+    boolean isSingleStory;
 
     // GROUP/QUEUE ENTITIES
     // TODO
 
     // SSOVS
-    // TODO
+    int completedStories;
+    int completedDefects;
+    int completedRepairs;
+    int completedAssignments;
+    ArrayList<Task> wipOverTime;
+    int devTimeOnStories;
+    int devTimeOnDefects;
+    int devTimeOnRepairs;
+    int devTimeOnSwitch;
 
-    public SoftwareSim(boolean debug) {
-        isDebug = debug;
+    public SoftwareSim(boolean doDebug, int limitInput, int testChance, boolean isSingleStory) {
+        this.doDebug = doDebug;
+        this.limitInput = limitInput;
+        this.testChance = testChance;
+        this.isSingleStory = isSingleStory;
+
+        completedStories = 0;
+        completedDefects = 0;
+        completedRepairs = 0;
+        completedAssignments = 0;
+        wipOverTime = new ArrayList<Task>();
+        devTimeOnStories = 0;
+        devTimeOnDefects = 0;
+        devTimeOnRepairs = 0;
+        devTimeOnSwitch = 0;
     }
 
     //////////////////////
@@ -38,18 +62,18 @@ public class SoftwareSim extends Engine {
     }
 
     public void runSim() {
-        debugPrint(isDebug, "Initial event list:");
+        debugPrint(doDebug, "Initial event list:");
         printList(FEL);
 
         // Main scheduler loop
         BEvents currentEvent = remove();
         while (currentEvent != null) {
             assert(currentEvent.timestamp >= now);
-            debugPrint(isDebug, "\nCurrent event list:");
-            if (isDebug) printList(FEL);
+            debugPrint(doDebug, "\nCurrent event list:");
+            if (doDebug) printList(FEL);
 
             now = currentEvent.timestamp;
-            debugPrint(isDebug, "- " + now + ": NOW RUNNING: " + currentEvent.eventType.toString());
+            debugPrint(doDebug, "- " + now + ": NOW RUNNING: " + currentEvent.eventType.toString());
             executeEvent(currentEvent);
 
             if (now >= 2880) {
