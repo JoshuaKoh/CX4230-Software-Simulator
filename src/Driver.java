@@ -50,11 +50,27 @@ public class Driver {
         long endTime = System.currentTimeMillis();
 
         // Output results
-        // TODO
+        System.out.println(
+                "OUTPUTS:" + "\n" +
+                        "-----------------------" + "\n" +
+                        "Stories completed:\t\t\t" +        ss.completedStories + "\n" +
+                        "Defects completed:\t\t\t" +        ss.completedDefects + "\n" +
+                        "Repairs completed:\t\t\t" +        ss.completedRepairs + "\n" +
+                        "Total tasks completed: \t\t" +     ss.completedTasks + "\n" +
+                        "-----------------------" + "\n" +
+                        "Developer time spent on:" + "\n" +
+                        "Stories:\t\t\t" +      ss.devTimeOnStories + "\n" +
+                        "Defects:\t\t\t" +      ss.devTimeOnDefects + "\n" +
+                        "Repairs:\t\t\t" +      ss.devTimeOnRepairs + "\n" +
+                        "Switching Tasks:\t" +  ss.devTimeOnSwitch + "\n" +
+                        "-----------------------" + "\n" +
+                        "END OF SIMULATION"
+        );
     }
 
     private static void printUsageAndExit() {
-        System.out.println("Usage:" +
+        System.out.println("" +
+                "Usage:" +
                 "\nhelp \tShow this usage text." +
                 "\n-d\tPrint the FEL after each event." +
                 "\n-l\tHow long does Design Stage wait before creating a new story? Defaults to 0." +

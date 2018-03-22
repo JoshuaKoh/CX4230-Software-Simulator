@@ -17,7 +17,7 @@ public class SoftwareSim extends Engine {
     int completedStories;
     int completedDefects;
     int completedRepairs;
-    int completedAssignments;
+    int completedTasks;
     ArrayList<Task> wipOverTime;
     int devTimeOnStories;
     int devTimeOnDefects;
@@ -33,7 +33,7 @@ public class SoftwareSim extends Engine {
         completedStories = 0;
         completedDefects = 0;
         completedRepairs = 0;
-        completedAssignments = 0;
+        completedTasks = 0;
         wipOverTime = new ArrayList<Task>();
         devTimeOnStories = 0;
         devTimeOnDefects = 0;
