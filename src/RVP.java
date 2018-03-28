@@ -16,10 +16,14 @@ public class RVP {
 
         return k - 1;
     }
-
+    // Uniform distribution
     public static int uniformDistribution(int min, int max) {
         return rand.nextInt((max - min) + 1) + min;
     }
-
+    
+    // Normal distribution
+    public static int normalDistribution(int mean, int stdDev) {
+    	return rand.nextGaussian()*stdDev+mean;
+    }
     // TODO
 }
