@@ -43,7 +43,7 @@ public class Driver {
         }
 
         SoftwareSim ss = new SoftwareSim(doDebug, limitInput, testChance, isSingleStory);
-        ss.schedule(1, EventType./*TODO*/, null);
+        ss.schedule(1, EventType.CREATE_DESIGN_STORY, null);
 
         long startTime = System.currentTimeMillis();
         ss.runSim();
@@ -51,7 +51,8 @@ public class Driver {
 
         // Output results
         System.out.println(
-                "OUTPUTS:" + "\n" +
+                "\n\nOUTPUTS:" + "\n" +
+                        "Simulation took " + ((endTime-startTime)/1000) + " seconds.\n" +
                         "-----------------------" + "\n" +
                         "Stories completed:\t\t\t" +        ss.completedStories + "\n" +
                         "Defects completed:\t\t\t" +        ss.completedDefects + "\n" +

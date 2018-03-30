@@ -1,5 +1,5 @@
 public enum TaskType {
-    STORY("Story"), DEFECT_FIX("Defect"), REPAIR("Repair");
+    DEV_HEAD("Do not use!"), STORY("Story"), DEFECT_FIX("Defect"), REPAIR("Repair");
 
     String name;
 
