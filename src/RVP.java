@@ -23,7 +23,7 @@ public class RVP {
     
     // Normal distribution
     public static int normalDistribution(int mean, int stdDev) {
-    	return rand.nextGaussian()*stdDev+mean;
+    	return (int) rand.nextGaussian()*stdDev+mean;
     }
     // TODO
 }
