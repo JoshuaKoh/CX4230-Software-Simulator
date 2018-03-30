@@ -11,7 +11,7 @@ public abstract class Engine {
         }
     }
 
-    public BEvents remove() {
+    public BEvents popFromFEL() {
         if (FEL.next == null) {
             System.out.println("No new events in queue!");
             return null;

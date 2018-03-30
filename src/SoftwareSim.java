@@ -58,7 +58,7 @@ public class SoftwareSim extends Engine {
             int newTime = now + WAIT_TIME;
             schedule(newTime, EventType.DEVELOPER_FINISHES_WAITING, taskToWorkOn);
         } else if (false) {
-            // TODO add more preconditions here
+            // TODO add more preconditions as needed
         }
     }
 
@@ -135,6 +135,9 @@ public class SoftwareSim extends Engine {
         }
     }
 
+    /**
+     * Returns the highest priority task from the dev queue.
+     */
     private Task popFromDevQueue() {
         if (devTodoQueueHead.next == null) {
             System.out.println("Tried to pop from dev queue, but no tasks found!");
@@ -159,7 +162,7 @@ public class SoftwareSim extends Engine {
         printList(FEL);
 
         // Main scheduler loop
-        BEvents currentEvent = remove();
+        BEvents currentEvent = popFromFEL();
         while (currentEvent != null) {
             assert(currentEvent.timestamp >= now);
 
@@ -172,7 +175,7 @@ public class SoftwareSim extends Engine {
             if (now >= 2880) {
                 break;
             }
-            currentEvent = remove();
+            currentEvent = popFromFEL();
         }
     }
 }
