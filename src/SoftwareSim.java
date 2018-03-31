@@ -6,6 +6,7 @@ public class SoftwareSim extends Engine {
     final int WAIT_TIME = 10;
     final int RATE_OF_DESIGN = 96;
     final int TESTING_TIME = 45;
+    final int PRODUCTION_TIME = 30;
 
     // PARAMETERS
     boolean doDebug;
@@ -91,6 +92,12 @@ public class SoftwareSim extends Engine {
                 now = Integer.MAX_VALUE;
                 break;
             case TASK_FINISHES_TESTING:
+                scheduleProductionCompletion((Task) event.eventData);
+            break;
+            case CHECK_FOR_OUTAGE:
+                // TODO schedule outage
+            break;
+            case TASK_FINISHES_PRODUCTION:
                 scheduleCheckForOutage((Task) event.eventData);
             break;
             default: // Should never happen
@@ -120,19 +127,24 @@ public class SoftwareSim extends Engine {
         int newTime = now + TESTING_TIME;
         schedule(newTime, EventType.TASK_FINISHES_TESTING, t);
     }
-    private void scheduleCheckForOutage(Task t) {
-        int newTime = now + OUTAGE_CHECK;
+    private void scheduleProductionCompletion(Task t) {
+        int newTime = now + PRODUCTION_TIME;
+        //TODO replace failureRisk RVP with exponential distribution
         int failureRisk = RVP.normalDistribution(50, 10);
         if (t.percentToTest*100 < failureRisk) {
             //TODO replace totalTime, lines, and percentToTest with probability distributions using RVP
             Task defectFix= new Task(now, 0, 50, 250, 50, TaskType.DEFECT_FIX);
             addToDevQueue(defectFix);
         } else {
-            //TODO schedule move to Production
-            schedule(newTime, EventType.CHECK_FOR_OUTAGE, t);
+            schedule(newTime, EventType.TASK_FINISHES_PRODUCTION, t);
         }
+    }
+    private void scheduleCheckForOutage(Task t) {
+        int newTime = now + OUTAGE_CHECK;
+        schedule(newTime, EventType.CHECK_FOR_OUTAGE, t);
 
     }
+
 
     //////////////////////
     // EVENT UTILITY
