@@ -89,6 +89,11 @@ public class SoftwareSim extends Engine {
                 // TODO Delete this line. This temporary line just causes the simulation to end without erroring.
                 now = Integer.MAX_VALUE;
                 break;
+            case TASK_FINISHES_TESTING:
+                // TODO implement probability check
+                // TODO schedule CHECK_FOR_OUTAGE event if passes probability CHECK_FOR_OUTAGE
+                // TODO implement assignment of new task to dev
+            break;
             default: // Should never happen
                 System.out.println("Unexpected event type: " + event.eventType.toString() + "!");
                 System.exit(1);
@@ -112,6 +117,10 @@ public class SoftwareSim extends Engine {
         schedule(newTime, EventType.DEVELOPER_FINISHES_TASK, t);
     }
 
+    private void scheduleTestCompletion(Task t) {
+        int newTime = now + t.totalTime; //tentative - constant testing time?
+        schedule(newTime, EventType.TASK_FINISHES_TESTING, t);
+    }
 
     //////////////////////
     // EVENT UTILITY
