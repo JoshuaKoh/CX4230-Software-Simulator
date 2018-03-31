@@ -5,6 +5,7 @@ public class SoftwareSim extends Engine {
     final int OUTAGE_CHECK = 96;
     final int WAIT_TIME = 10;
     final int RATE_OF_DESIGN = 96;
+    final int TESTING_TIME = 45;
 
     // PARAMETERS
     boolean doDebug;
@@ -82,7 +83,7 @@ public class SoftwareSim extends Engine {
                 scheduleTaskCompletion((Task) event.eventData);
                 break;
             case DEVELOPER_FINISHES_TASK:
-                // TODO implement moving task to Testing Stage by scheduling TESTING_FINISHED.
+                scheduleTestCompletion((Task) event.eventData);
                 // TODO implement developer taking on a new task.
                 // TODO anything else?
 
@@ -90,9 +91,7 @@ public class SoftwareSim extends Engine {
                 now = Integer.MAX_VALUE;
                 break;
             case TASK_FINISHES_TESTING:
-                // TODO implement probability check
-                // TODO schedule CHECK_FOR_OUTAGE event if passes probability CHECK_FOR_OUTAGE
-                // TODO implement assignment of new task to dev
+                scheduleCheckForOutage((Task) event.eventData);
             break;
             default: // Should never happen
                 System.out.println("Unexpected event type: " + event.eventType.toString() + "!");
@@ -118,8 +117,21 @@ public class SoftwareSim extends Engine {
     }
 
     private void scheduleTestCompletion(Task t) {
-        int newTime = now + t.totalTime; //tentative - constant testing time?
+        int newTime = now + TESTING_TIME;
         schedule(newTime, EventType.TASK_FINISHES_TESTING, t);
+    }
+    private void scheduleCheckForOutage(Task t) {
+        int newTime = now + OUTAGE_CHECK;
+        int failureRisk = RVP.normalDistribution(50, 10);
+        if (t.percentToTest*100 < failureRisk) {
+            //TODO replace totalTime, lines, and percentToTest with probability distributions using RVP
+            Task defectFix= new Task(now, 0, 50, 250, 50, TaskType.DEFECT_FIX);
+            addToDevQueue(defectFix);
+        } else {
+            //TODO schedule move to Production
+            schedule(newTime, EventType.CHECK_FOR_OUTAGE, t);
+        }
+
     }
 
     //////////////////////
