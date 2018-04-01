@@ -89,8 +89,9 @@ public class RVP {
     }
 
     // Provides a value for the number of lines of code of a task based on the time the task will take.
+    // TODO verify that the casting to int of time doesn't cause an error later on.
     public static int getNumLines(int time) {
-        int numLines = normalDistribution((time * .8), TEN);
+        int numLines = normalDistribution((int)(time * .8), TEN);
         if (numLines <= 0) {
             numLines = 1;
         }

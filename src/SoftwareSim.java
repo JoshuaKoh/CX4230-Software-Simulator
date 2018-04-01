@@ -109,7 +109,7 @@ public class SoftwareSim extends Engine {
 
     private void addNewStoryToDevQueue() {
         // TODO replace totalTime, lines, and percentToTest with probability distributions using RVP
-        Task newStory = new Task(now, 0, 77, 200, 100, TaskType.STORY);
+        Task newStory = new Task(now, 0, 77, RVP.getNumLines(200), RVP.amountTested(100), TaskType.STORY);
         addToDevQueue(newStory);
     }
 
@@ -133,7 +133,7 @@ public class SoftwareSim extends Engine {
         int failureRisk = RVP.normalDistribution(50, 10);
         if (t.percentToTest*100 < failureRisk) {
             //TODO replace totalTime, lines, and percentToTest with probability distributions using RVP
-            Task defectFix= new Task(now, 0, 50, 250, 50, TaskType.DEFECT_FIX);
+            Task defectFix= new Task(now, 0, 50, RVP.getNumLines(250), RVP.amountTested(100), TaskType.DEFECT_FIX);
             addToDevQueue(defectFix);
         } else {
             schedule(newTime, EventType.TASK_FINISHES_PRODUCTION, t);
