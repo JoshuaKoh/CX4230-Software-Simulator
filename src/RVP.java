@@ -32,7 +32,7 @@ public class RVP {
     
     // Normal distribution
     public static int normalDistribution(int mean, int stdDev) {
-    	return rand.nextGaussian()*stdDev+mean;
+    	return (int) rand.nextGaussian()*stdDev+mean;
     }
 
     // Provides the values of the creation times of new Design Stage stories. Creation times come from a Poisson distribution
