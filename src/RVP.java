@@ -3,6 +3,15 @@ import java.util.Random;
 public class RVP {
     static Random rand = new Random();
 
+    private static int MIN;
+    private static int MAX;
+
+    private static final int FIVE_DAYS = 240;  //five days time
+    private static final int THREE_DAYS = 144; //three days time
+    private static final int TWO_DAYS = 96;    //two days time
+    private static final int ONE_DAY = 24;     //one days time
+    private static final int TEN = 10;
+
     // Poisson distribution
     public static int DuC(double lambda) {
         double L = Math.exp(-lambda);
@@ -25,5 +34,66 @@ public class RVP {
     public static int normalDistribution(int mean, int stdDev) {
     	return rand.nextGaussian()*stdDev+mean;
     }
-    // TODO
+
+    // Provides the values of the creation times of new Design Stage stories. Creation times come from a Poisson distribution
+    // where lamda is 144, representing three days time.
+    public static int designRate() {
+        return (DuC(THREE_DAYS));
+    }
+
+    // Provides the value for the amount of time to complete a Design Stage story.
+    public static int designTime() {
+        int designTime = normalDistribution(TWO_DAYS, ONE_DAY);
+        if (designTime <= 0) {
+            designTime = 1;
+        }
+        return designTime;
+    }
+
+    // Provides the percentage value for the amount of a task that a developer will test.
+    public static int amountTested(int testChance) {
+        int amountTested = normalDistribution(testChance, TEN);
+        if (amountTested <= 0) {
+            amountTested = 1;
+        }
+        return amountTested;
+    }
+
+    // Provides the value used to determine the chance that a story in Test Stage will fail testing.
+    public static int testingRNG() {
+        MIN = 0;
+        MAX = TEN * TEN;
+        return (uniformDistribution(MIN, MAX));
+    }
+
+    // Provides the value for the amount of time to copmlete a Testing Stage defect given the
+    // coverage, a value for the percentage of lines of code covered.
+    public static int defectTime(int coverage) {
+        MAX = TWO_DAYS;
+        MIN = (MAX - (MAX * coverage));
+        return (uniformDistribution(MIN, MAX));
+    }
+
+    // Provides the valie for determining the chance that an outage will occur in Production stage.
+    public static int outageRNG() {
+        MIN = 0;
+        MAX = TEN * TEN * TEN;
+        return (uniformDistribution(MIN, MAX));
+    }
+
+    // Provides the value for the time to complete a Production Stage outage.
+    public static int outageTime(int coverage) {
+        MAX = FIVE_DAYS;
+        MIN = (MAX - (MAX * coverage));
+        return  (uniformDistribution(MIN, MAX));
+    }
+
+    // Provides a value for the number of lines of code of a task based on the time the task will take.
+    public static int getNumLines(int time) {
+        int numLines = normalDistribution((time * .8), TEN);
+        if (numLines <= 0) {
+            numLines = 1;
+        }
+        return numLines;
+    }
 }
