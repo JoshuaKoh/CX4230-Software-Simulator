@@ -13,7 +13,7 @@ public class RVP {
     private static final int TEN = 10;
 
     // Poisson distribution
-    public static int DuC(double lambda) {
+    public static int poissonDistribution(double lambda) {
         double L = Math.exp(-lambda);
         double p = 1.0;
         int k = 0;
@@ -25,6 +25,7 @@ public class RVP {
 
         return k - 1;
     }
+
     // Uniform distribution
     public static int uniformDistribution(int min, int max) {
         return rand.nextInt((max - min) + 1) + min;
@@ -35,10 +36,11 @@ public class RVP {
     	return (int) rand.nextGaussian()*stdDev+mean;
     }
 
-    // Provides the values of the creation times of new Design Stage stories. Creation times come from a Poisson distribution
-    // where lamda is 144, representing three days time.
+    // Provides the values of the creation times of new Design Stage stories.
+    // Creation times come from a Poisson distribution
+    // where lambda is 144, representing three days time.
     public static int designRate() {
-        return (DuC(THREE_DAYS));
+        return (poissonDistribution(THREE_DAYS));
     }
 
     // Provides the value for the amount of time to complete a Design Stage story.

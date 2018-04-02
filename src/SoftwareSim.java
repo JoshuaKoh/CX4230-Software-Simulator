@@ -85,11 +85,6 @@ public class SoftwareSim extends Engine {
                 break;
             case DEVELOPER_FINISHES_TASK:
                 scheduleTestCompletion((Task) event.eventData);
-                // TODO implement developer taking on a new task.
-                // TODO anything else?
-
-                // TODO Delete this line. This temporary line just causes the simulation to end without erroring.
-                now = Integer.MAX_VALUE;
                 break;
             case TASK_FINISHES_TESTING:
                 scheduleProductionCompletion((Task) event.eventData);
@@ -127,22 +122,23 @@ public class SoftwareSim extends Engine {
         int newTime = now + TESTING_TIME;
         schedule(newTime, EventType.TASK_FINISHES_TESTING, t);
     }
+
     private void scheduleProductionCompletion(Task t) {
         int newTime = now + PRODUCTION_TIME;
         //TODO replace failureRisk RVP with exponential distribution
         int failureRisk = RVP.normalDistribution(50, 10);
         if (t.percentToTest*100 < failureRisk) {
             //TODO replace totalTime, lines, and percentToTest with probability distributions using RVP
-            Task defectFix= new Task(now, 0, 50, RVP.getNumLines(250), RVP.amountTested(100), TaskType.DEFECT_FIX);
+            Task defectFix = new Task(now, 0, 50, RVP.getNumLines(250), RVP.amountTested(100), TaskType.DEFECT_FIX);
             addToDevQueue(defectFix);
         } else {
             schedule(newTime, EventType.TASK_FINISHES_PRODUCTION, t);
         }
     }
+
     private void scheduleCheckForOutage(Task t) {
         int newTime = now + OUTAGE_CHECK;
         schedule(newTime, EventType.CHECK_FOR_OUTAGE, t);
-
     }
 
 
