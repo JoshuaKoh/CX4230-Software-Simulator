@@ -80,14 +80,16 @@ public class Driver {
         System.exit(0);
     }
 
-    private static boolean isNumeric(String str)
-    {
-        try
-        {
-            double d = Double.parseDouble(str);
-        }
-        catch(NumberFormatException nfe)
-        {
+    /**
+     *
+     * @param str   A string to test
+     * @return      true,   if the string is a number
+     *              false,  otherwise
+     */
+    private static boolean isNumeric(String str) {
+        try {
+            double trash = Double.parseDouble(str);
+        } catch(NumberFormatException nfe) {
             return false;
         }
         return true;
