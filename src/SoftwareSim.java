@@ -6,7 +6,6 @@ public class SoftwareSim extends Engine {
     final int WAIT_TIME = 10;
     final int RATE_OF_DESIGN = 96;
     final int TESTING_TIME = 45;
-    final int PRODUCTION_TIME = 30;
 
     // PARAMETERS
     boolean doDebug;
@@ -81,21 +80,25 @@ public class SoftwareSim extends Engine {
                 bootstrapNewDesignStory();
                 break;
             case DEVELOPER_FINISHES_WAITING:
+                devTimeOnSwitch += WAIT_TIME;
                 scheduleTaskCompletion((Task) event.eventData);
                 break;
             case DEVELOPER_FINISHES_TASK:
-                scheduleTestCompletion((Task) event.eventData);
+                availableDevelopers++;
+                Task taskInDev = (Task) event.eventData;
+                updateDevTimes(taskInDev);
+                scheduleTestCompletion(taskInDev);
                 break;
             case TASK_FINISHES_TESTING:
-                scheduleProductionCompletion((Task) event.eventData);
+                Task taskInTest = (Task) event.eventData;
+                boolean doesPassTesting = doesTaskPassTestingStage(taskInTest);
+                if (doesPassTesting) {
+                    scheduleChecksForOutage(taskInTest);
+                    updateCountersOfCompletedTasks(taskInTest);
+                }
             break;
             case CHECK_FOR_OUTAGE:
-                // TODO verify checkForOutage
-                // TODO add additional logic as necessary
                 checkForOutage((Task) event.eventData);
-            break;
-            case TASK_FINISHES_PRODUCTION:
-                scheduleCheckForOutage((Task) event.eventData);
             break;
             default: // Should never happen
                 System.out.println("Unexpected event type: " + event.eventType.toString() + "!");
@@ -105,8 +108,7 @@ public class SoftwareSim extends Engine {
     }
 
     private void addNewStoryToDevQueue() {
-        // TODO verify workTime is set correctly
-        Task newStory = new Task(now, 0, RVP.designTime(), RVP.getNumLines(200), RVP.amountTested(100), TaskType.STORY);
+        Task newStory = new Task(now, 0, RVP.designTime(), RVP.getNumLines(200), RVP.amountTested(testChance), TaskType.STORY);
         addToDevQueue(newStory);
     }
 
@@ -120,40 +122,56 @@ public class SoftwareSim extends Engine {
         schedule(newTime, EventType.DEVELOPER_FINISHES_TASK, t);
     }
 
+    private void updateDevTimes(Task t) {
+        if (t.type == TaskType.STORY) {
+            devTimeOnStories += t.totalTime;
+        } else if (t.type == TaskType.DEFECT_FIX) {
+            devTimeOnDefects += t.totalTime;
+        } else {
+            devTimeOnRepairs += t.totalTime;
+        }
+    }
+
     private void scheduleTestCompletion(Task t) {
         int newTime = now + TESTING_TIME;
         schedule(newTime, EventType.TASK_FINISHES_TESTING, t);
     }
 
-    private void scheduleProductionCompletion(Task t) {
-        int newTime = now + PRODUCTION_TIME;
-        int failureRisk = RVP.normalDistribution(50, 10);
-        if (t.percentToTest*100 < failureRisk) {
-            //TODO verify workTime is set correctly; how are we determining the workTime?
-            Task defectFix = new Task(now, 0, RVP.defectTime(t.percentToTest), RVP.getNumLines(t.lines), RVP.amountTested(100), TaskType.DEFECT_FIX);
+    private boolean doesTaskPassTestingStage(Task t) {
+        int failureRisk = RVP.uniformDistribution(0, 100);
+        if (t.percentToTest < failureRisk) {
+            assert(t.workTime >= t.totalTime);
+            int totalTime = RVP.defectTime(t.percentToTest);
+            Task defectFix = new Task(now, 0, totalTime, RVP.getNumLines(totalTime), RVP.amountTested(testChance), TaskType.DEFECT_FIX);
             addToDevQueue(defectFix);
-        } else {
-            schedule(newTime, EventType.TASK_FINISHES_PRODUCTION, t);
+            return false;
         }
+        return true;
+    }
+
+    private void scheduleChecksForOutage(Task t) {
+        int firstCheck = now + OUTAGE_CHECK;
+        int secondCheck = firstCheck + OUTAGE_CHECK;
+        schedule(firstCheck, EventType.CHECK_FOR_OUTAGE, t);
+        schedule(secondCheck, EventType.CHECK_FOR_OUTAGE, t);
     }
 
     private void checkForOutage(Task t) {
-        //TODO what is our standard for determining when an outage has occured?
-
         int chanceOfOutage = RVP.outageRNG();
-        if (chanceOfOutage > 30){
+        if (chanceOfOutage < 30){
             //outage occurs
-            Task repairFix = new Task(now, 0, RVP.outageTime(testChance), t.lines, t.percentToTest, TaskType.REPAIR);
+            int totalTime = RVP.outageTime(testChance);
+            Task repairFix = new Task(now, 0, totalTime, RVP.getNumLines(totalTime), RVP.amountTested(testChance), TaskType.REPAIR);
             addToDevQueue(repairFix);
-        } else {
-            //no outage
-            // TODO determine what, if anything, should be done if no outage occurs.
-            updateCountersOfCompletedTasks(t);
         }
     }
 
+    /**
+     * Update counters for completed tasks
+     *
+     * @param t     The task just completed
+     */
     private void updateCountersOfCompletedTasks(Task t) {
-        //Update counters for completed tasks
         if (t.type == TaskType.STORY) {
             completedStories += 1;
         } else if (t.type == TaskType.DEFECT_FIX) {
@@ -163,12 +181,6 @@ public class SoftwareSim extends Engine {
         }
         completedTasks += 1;
     }
-
-    private void scheduleCheckForOutage(Task t) {
-        int newTime = now + OUTAGE_CHECK;
-        schedule(newTime, EventType.CHECK_FOR_OUTAGE, t);
-    }
-
 
     //////////////////////
     // EVENT UTILITY

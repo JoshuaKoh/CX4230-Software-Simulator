@@ -72,7 +72,7 @@ public class RVP {
     // coverage, a value for the percentage of lines of code covered.
     public static int defectTime(int coverage) {
         MAX = TWO_DAYS;
-        MIN = (MAX - (MAX * coverage));
+        MIN = (MAX - (MAX * (coverage/100)));
         return (uniformDistribution(MIN, MAX));
     }
 

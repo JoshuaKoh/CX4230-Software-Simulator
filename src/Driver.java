@@ -1,4 +1,3 @@
-
 public class Driver {
     public static void main(String[] args) {
         boolean doDebug = false;
@@ -52,7 +51,7 @@ public class Driver {
         // Output results
         System.out.println(
                 "\n\nOUTPUTS:" + "\n" +
-                        "Simulation took " + ((endTime-startTime)/1000) + " seconds.\n" +
+                        "Simulation took " + ((endTime-startTime)) + " milliseconds.\n" +
                         "-----------------------" + "\n" +
                         "Stories completed:\t\t\t" +        ss.completedStories + "\n" +
                         "Defects completed:\t\t\t" +        ss.completedDefects + "\n" +
@@ -81,7 +80,6 @@ public class Driver {
     }
 
     /**
-     *
      * @param str   A string to test
      * @return      true,   if the string is a number
      *              false,  otherwise
