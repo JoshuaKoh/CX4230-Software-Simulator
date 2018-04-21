@@ -76,7 +76,7 @@ public class RVP {
         return (uniformDistribution(MIN, MAX));
     }
 
-    // Provides the valie for determining the chance that an outage will occur in Production stage.
+    // Provides the value for determining the chance that an outage will occur in Production stage.
     public static int outageRNG() {
         MIN = 0;
         MAX = TEN * TEN * TEN;

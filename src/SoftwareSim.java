@@ -90,7 +90,9 @@ public class SoftwareSim extends Engine {
                 scheduleProductionCompletion((Task) event.eventData);
             break;
             case CHECK_FOR_OUTAGE:
-                // TODO schedule outage
+                // TODO verify checkForOutage
+                // TODO add additional logic as necessary
+                checkForOutage((Task) event.eventData);
             break;
             case TASK_FINISHES_PRODUCTION:
                 scheduleCheckForOutage((Task) event.eventData);
@@ -103,8 +105,8 @@ public class SoftwareSim extends Engine {
     }
 
     private void addNewStoryToDevQueue() {
-        // TODO replace totalTime, lines, and percentToTest with probability distributions using RVP
-        Task newStory = new Task(now, 0, 77, RVP.getNumLines(200), RVP.amountTested(100), TaskType.STORY);
+        // TODO verify workTime is set correctly
+        Task newStory = new Task(now, 0, RVP.designTime(), RVP.getNumLines(200), RVP.amountTested(100), TaskType.STORY);
         addToDevQueue(newStory);
     }
 
@@ -125,15 +127,41 @@ public class SoftwareSim extends Engine {
 
     private void scheduleProductionCompletion(Task t) {
         int newTime = now + PRODUCTION_TIME;
-        //TODO replace failureRisk RVP with exponential distribution
         int failureRisk = RVP.normalDistribution(50, 10);
         if (t.percentToTest*100 < failureRisk) {
-            //TODO replace totalTime, lines, and percentToTest with probability distributions using RVP
-            Task defectFix = new Task(now, 0, 50, RVP.getNumLines(250), RVP.amountTested(100), TaskType.DEFECT_FIX);
+            //TODO verify workTime is set correctly; how are we determining the workTime?
+            Task defectFix = new Task(now, 0, RVP.defectTime(t.percentToTest), RVP.getNumLines(t.lines), RVP.amountTested(100), TaskType.DEFECT_FIX);
             addToDevQueue(defectFix);
         } else {
             schedule(newTime, EventType.TASK_FINISHES_PRODUCTION, t);
         }
+    }
+
+    private void checkForOutage(Task t) {
+        //TODO what is our standard for determining when an outage has occured?
+
+        int chanceOfOutage = RVP.outageRNG();
+        if (chanceOfOutage > 30){
+            //outage occurs
+            Task repairFix = new Task(now, 0, RVP.outageTime(testChance), t.lines, t.percentToTest, TaskType.REPAIR);
+            addToDevQueue(repairFix);
+        } else {
+            //no outage
+            // TODO determine what, if anything, should be done if no outage occurs.
+            updateCountersOfCompletedTasks(t);
+        }
+    }
+
+    private void updateCountersOfCompletedTasks(Task t) {
+        //Update counters for completed tasks
+        if (t.type == TaskType.STORY) {
+            completedStories += 1;
+        } else if (t.type == TaskType.DEFECT_FIX) {
+            completedDefects += 1;
+        } else {
+            completedRepairs += 1;
+        }
+        completedTasks += 1;
     }
 
     private void scheduleCheckForOutage(Task t) {
