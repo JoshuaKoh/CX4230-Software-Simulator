@@ -57,6 +57,7 @@ public class Driver {
                         "Defects completed:\t\t\t" +        ss.completedDefects + "\n" +
                         "Repairs completed:\t\t\t" +        ss.completedRepairs + "\n" +
                         "Total tasks completed: \t\t" +     ss.completedTasks + "\n" +
+                        "Maximum work backlog: \t\t" +      ss.maxDevQueueSize + "\n" +
                         "-----------------------" + "\n" +
                         "Developer time spent on:" + "\n" +
                         "Stories:\t\t\t" +      ss.devTimeOnStories + "\n" +

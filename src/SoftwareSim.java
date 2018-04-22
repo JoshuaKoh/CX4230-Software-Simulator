@@ -27,6 +27,8 @@ public class SoftwareSim extends Engine {
     int devTimeOnDefects;
     int devTimeOnRepairs;
     int devTimeOnSwitch;
+    int devQueueSize;
+    int maxDevQueueSize;
 
     public SoftwareSim(boolean doDebug, int limitInput, int testChance, boolean isSingleStory) {
         this.doDebug = doDebug;
@@ -46,6 +48,8 @@ public class SoftwareSim extends Engine {
         devTimeOnDefects = 0;
         devTimeOnRepairs = 0;
         devTimeOnSwitch = 0;
+        devQueueSize = 0;
+        maxDevQueueSize = 0;
     }
 
     //////////////////////
@@ -202,6 +206,10 @@ public class SoftwareSim extends Engine {
             t.next = temp.next;
             temp.next = t;
         }
+        this.devQueueSize++;
+        if (this.devQueueSize > this.maxDevQueueSize) {
+            this.maxDevQueueSize = this.devQueueSize;
+        }
     }
 
     /**
@@ -216,6 +224,7 @@ public class SoftwareSim extends Engine {
         Task temp = devTodoQueueHead.next.next;
         Task popMe = devTodoQueueHead.next;
         devTodoQueueHead.next = temp;
+        this.devQueueSize--;
         return popMe;
     }
 
