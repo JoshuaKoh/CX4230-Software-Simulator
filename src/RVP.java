@@ -86,7 +86,7 @@ public class RVP {
     // Provides the value for the time to complete a Production Stage outage.
     public static int outageTime(int coverage) {
         MAX = FIVE_DAYS;
-        MIN = (MAX - (MAX * coverage));
+        MIN = (MAX - (MAX * (coverage/100)));
         return  (uniformDistribution(MIN, MAX));
     }
 
